@@ -1,0 +1,25 @@
+name: Release Tracker
+# Triggers on cron job expression: Daily on 21:43
+on:
+  schedule:
+    - cron:  '43 21 * * *'
+jobs:
+  release-check:
+    env:
+      IS_RELEASE_CREATED: false
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+      name: checkout code.
+    - name: check
+      run: |
+        echo "Steps to check if new release is created"
+        # Need 
+        # some input
+
+        # set the env to true if release is created.
+        echo '::set-env name=IS_RELEASE_CREATED::true'
+    - name: Trigger build on Remote Repo
+      if: env.IS_RELEASE_CREATED == 'true’
+      run: |
+        curl -XPOST -u "arush-sal:${{ secrets.PERSONAL_ACCESS_TOKEN }}" -H "Accept: application/vnd.github.everest-preview+json" -H "Content-Type: application/json" https://api.github.com/repos/arush-sal/tuigreet-greetd-dpkg-builder/dispatches --data '{"event_type": "build_application"}'
